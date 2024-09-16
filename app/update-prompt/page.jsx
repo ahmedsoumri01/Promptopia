@@ -1,16 +1,18 @@
-"use client";
+"use client"; // Ensure this component is treated as a client-side component
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import Form from "@components/Form";
-export default function page() {
-    const router = useRouter();
+import { Suspense } from "react"; // Import Suspense
+
+export default function UpdatePromptPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
 
-  const [post, setPost] = useState({ prompt: "", tag: "", });
+  const [post, setPost] = useState({ prompt: "", tag: "" });
   const [submitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     const getPromptDetails = async () => {
       const response = await fetch(`/api/prompt/${promptId}`);
@@ -49,13 +51,16 @@ export default function page() {
       setIsSubmitting(false);
     }
   };
+
   return (
-    <Form
-    type='Edit'
-    post={post}
-    setPost={setPost}
-    submitting={submitting}
-    handleSubmit={updatePrompt}
-  />
-  )
+    <Suspense fallback={<div>Loading...</div>}>
+      <Form
+        type="Edit"
+        post={post}
+        setPost={setPost}
+        submitting={submitting}
+        handleSubmit={updatePrompt}
+      />
+    </Suspense>
+  );
 }
